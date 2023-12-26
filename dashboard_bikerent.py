@@ -5,8 +5,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import streamlit as st
 
-data = pd.read_csv("~/Documents/data_sources/day.csv")
-data['suhu'] = data['temp']*(39+8)+(-8)     #39 and -8 was declared as max and min of 'temp' variable
+# Path to the file in your github
+file_path = "https://raw.githubusercontent.com/hafidzmf48/Dashboard_Bike_Sharing/main/day.csv"
+
+# Read a CSV file using pandas
+data = pd.read_csv(file_path, delimiter=',', encoding='utf-8', header=0)data['suhu'] = data['temp']*(39+8)+(-8)     #39 and -8 was declared as max and min of 'temp' variable
 data['kelembaban'] = data['hum']*100        #100 was declared as max values of 'hum' variable
 data['speed_angin'] = data['windspeed']*67  #67 was declared as max values of 'windspeed' variable
 year_dict = {0 : 2011 , 1 : 2012}
