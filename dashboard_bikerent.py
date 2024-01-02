@@ -4,6 +4,7 @@ import os
 import seaborn as sns
 import matplotlib.pyplot as plt
 import streamlit as st
+import sqlite3
 
 # Path to the file in your github
 file_path = "https://raw.githubusercontent.com/hafidzmf48/Dashboard_Bike_Sharing/main/day.csv"
@@ -111,5 +112,31 @@ with st.expander("see explanation"):
            it will increase the bike users.
            """)
 
-text = st.text_area('Feedback')
-st.write('Feedback: ', text)
+# Create a connection to SQLite database
+conn = sqlite3.connect('feedback.db')
+c = conn.cursor()
+
+# Create a table to store feedback if it doesn't exist
+c.execute('''CREATE TABLE IF NOT EXISTS feedback (
+                id INTEGER PRIMARY KEY,
+                user_feedback TEXT
+            )''')
+conn.commit()
+
+# Get user feedback
+user_feedback = st.text_area("Provide your feedback here:")
+
+# Save the feedback to the SQLite database
+if user_feedback:
+    c.execute("INSERT INTO feedback (user_feedback) VALUES (?)", (user_feedback,))
+    conn.commit()
+
+# Display the stored feedback from the database
+st.header("Stored Feedback")
+c.execute("SELECT user_feedback FROM feedback")
+stored_feedback = c.fetchall()
+for feedback in stored_feedback:
+    st.write(feedback[0])
+
+# Close the connection
+conn.close()
