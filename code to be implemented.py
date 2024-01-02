@@ -3,6 +3,9 @@ import sqlite3
 import csv
 from io import StringIO
 
+# Define your secret key or password
+SECRET_KEY = "your_secret_password"
+
 # Create a connection to SQLite database
 conn = sqlite3.connect('feedback.db')
 c = conn.cursor()
@@ -25,16 +28,18 @@ stored_feedback = c.fetchall()
 for feedback in stored_feedback:
     st.write(feedback[0])
 
-# Download button to export feedback as a CSV file
-if st.button('Download Feedback as CSV'):
-    feedback_data = [feedback[0] for feedback in stored_feedback]
-    csv_feedback = download_feedback_as_csv(feedback_data)
-    st.download_button(
-        label="Click here to download",
-        data=csv_feedback,
-        file_name="feedback_data.csv",
-        mime="text/csv"
-    )
+# Access control for download button
+password_input = st.text_input("Enter password to download feedback as CSV:")
+if password_input == SECRET_KEY:
+    if st.button('Download Feedback as CSV'):
+        feedback_data = [feedback[0] for feedback in stored_feedback]
+        csv_feedback = download_feedback_as_csv(feedback_data)
+        st.download_button(
+            label="Click here to download",
+            data=csv_feedback,
+            file_name="feedback_data.csv",
+            mime="text/csv"
+        )
 
 # Close the connection
 conn.close()
